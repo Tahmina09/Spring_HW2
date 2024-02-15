@@ -2,6 +2,7 @@ package com.example.demo.repository;
 
 import com.example.demo.model.User;
 import com.example.demo.utilis.UserMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,7 @@ import java.util.List;
 public class UserRepository {
     private final JdbcTemplate jdbc;
 
+    @Autowired
     public UserRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
@@ -46,12 +48,10 @@ public class UserRepository {
         jdbc.update(updateQuery, user.getFirstName(), user.getLastName(), user.getId());
     }
 
-    //ToDo понять в чем ошибка и исправить
     public User getOne(Integer id) {
         String getQuery = "SELECT * FROM userTable WHERE id = ?";
 
-        return jdbc.query(getQuery, new Object[]{id}, new UserMapper())
-                .stream().findFirst().orElse(null);
+        return jdbc.queryForObject(getQuery, new Object[]{id}, new UserMapper());
     }
 
 }
